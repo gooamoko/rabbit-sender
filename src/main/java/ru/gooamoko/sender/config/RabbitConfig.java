@@ -12,25 +12,34 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
 
-    @Bean("paymentsConfig")
-    @ConfigurationProperties("payments")
-    public QueueConfigProperties queueProperties() {
-        return new QueueConfigProperties();
+    @Bean("smsQueue")
+    public Queue smsQueue(ExchangeConfigProperties properties) {
+        return new Queue(properties.getSms().getQueue());
     }
 
-
-    @Bean
-    public Queue queue(@Qualifier("paymentsConfig") QueueConfigProperties properties) {
-        return new Queue(properties.getQueue());
+    @Bean("emailQueue")
+    public Queue emailQueue(ExchangeConfigProperties properties) {
+        return new Queue(properties.getEmail().getQueue());
     }
 
     @Bean
-    public TopicExchange topicExchange(@Qualifier("paymentsConfig") QueueConfigProperties properties) {
+    public TopicExchange topicExchange(ExchangeConfigProperties properties) {
         return new TopicExchange(properties.getExchange());
     }
 
-    @Bean
-    public Binding phonePaymentsBinding(Queue queue, TopicExchange exchange, QueueConfigProperties properties) {
-        return BindingBuilder.bind(queue).to(exchange).with(properties.getRoutingKey());
+    @Bean("smsBinding")
+    public Binding smsBinding(@Qualifier("smsQueue") Queue queue, TopicExchange exchange, ExchangeConfigProperties properties) {
+        return BindingBuilder
+                .bind(queue)
+                .to(exchange)
+                .with(properties.getSms().getRoutingKey());
+    }
+
+    @Bean("emailBinding")
+    public Binding emailBinding(@Qualifier("emailQueue") Queue queue, TopicExchange exchange, ExchangeConfigProperties properties) {
+        return BindingBuilder
+                .bind(queue)
+                .to(exchange)
+                .with(properties.getEmail().getRoutingKey());
     }
 }
