@@ -26,8 +26,9 @@ public class RabbitSenderApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		for (int i = 1; i <= 10; i++) {
 			String message = "test message " + i;
-			producer.sendSmsNotification(message);
-			log.info("sending message {}.", message);
+			String phone = "9132231234";
+			producer.sendSmsNotification(phone, message);
+			log.info("sending message {} to phone {}.", message, phone);
 		}
 	}
 

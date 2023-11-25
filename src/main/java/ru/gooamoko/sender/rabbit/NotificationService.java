@@ -16,13 +16,13 @@ public class NotificationService {
         this.properties = properties;
     }
 
-    public void sendSmsNotification(String message) {
-        // TODO: 18.11.2023 Добавить номер телефона
+    public void sendSmsNotification(String phone, String text) {
+        String message = phone + "|" + text;
         rabbitTemplate.convertAndSend(properties.getExchange(), properties.getSms().getRoutingKey(), message);
     }
 
-    public void sendEmailNotification(String message) {
-        // TODO: 18.11.2023 Добавить адрес почты и тему письма
+    public void sendEmailNotification(String email, String theme, String text) {
+        String message = email + "|" + theme + "|" + text;
         rabbitTemplate.convertAndSend(properties.getExchange(), properties.getEmail().getRoutingKey(), message);
     }
 }
