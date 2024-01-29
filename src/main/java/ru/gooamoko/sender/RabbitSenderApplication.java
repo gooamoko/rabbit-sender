@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import ru.gooamoko.sender.config.ExchangeConfigProperties;
 import ru.gooamoko.sender.config.QueueConfigProperties;
+import ru.gooamoko.sender.model.SmsMessage;
 import ru.gooamoko.sender.rabbit.NotificationService;
 
 @SpringBootApplication
@@ -27,7 +28,13 @@ public class RabbitSenderApplication implements CommandLineRunner {
 		for (int i = 1; i <= 10; i++) {
 			String message = "test message " + i;
 			String phone = "9132231234";
-			producer.sendSmsNotification(phone, message);
+			SmsMessage smsMessage = new SmsMessage();
+			smsMessage.setPhone(phone);
+			smsMessage.setText(message);
+			smsMessage.setUser("user");
+			smsMessage.setService("rabbit-sender");
+			producer.sendSmsNotification(smsMessage);
+			producer.sendEmailNotification("test@gmail.com", "test", message);
 			log.info("sending message {} to phone {}.", message, phone);
 		}
 	}
